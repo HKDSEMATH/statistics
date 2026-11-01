@@ -8,14 +8,14 @@
     <script>
         MathJax = {
             tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-            svg: { fontCache: 'global', linebreaks: { inline: true } }
+            output: { displayOverflow: 'scale', linebreaks: { inline: false } }
         };
     </script>
-    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-svg.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
-        #question-display, .qtext { font-family: 'Times New Roman', Times, serif; }
+        #question-display, #l3-blocks, .qtext { font-family: 'Times New Roman', Times, serif; }
         .mathvar { font-style: italic; }
         #question-display .stem-table, #l3-blocks .stem-table, .qtext .stem-table {
             border-collapse: collapse;
@@ -115,6 +115,7 @@
         #l3-area mjx-container svg,
         #l3-blocks mjx-container svg,
         #mc-options mjx-container svg { display: inline-block !important; }
+        .option-btn mjx-container { display: block; margin-left: auto !important; margin-right: auto !important; }
         .glass-panel {
             background: rgba(30, 41, 59, 0.8);
             backdrop-filter: blur(12px);
@@ -220,6 +221,9 @@
             100% { transform: scale(1); }
         }
         .badge-bounce { animation: badgeBounce 0.6s ease; }
+        /* Canonical MC option box rules (family-wide, do not regress) */
+        #mc-options .option-btn { white-space: normal; overflow-wrap: break-word; word-break: break-word; }
+        #mc-options .option-btn > div { max-width: 100%; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4 selection:bg-amber-500 selection:text-white">
@@ -415,7 +419,7 @@
                 </div>
             </div>
 
-            <div id="question-display" class="text-lg sm:text-xl text-white mb-6 overflow-x-auto py-6 px-4 text-left leading-relaxed min-h-[120px] max-w-2xl mx-auto">
+            <div id="question-display" class="text-lg sm:text-xl text-white mb-6 py-6 px-4 text-left leading-relaxed min-h-[120px] max-w-2xl mx-auto">
                 <!-- MathJax renders here -->
             </div>
 
@@ -556,7 +560,7 @@
         const GOOGLE_SCRIPT_URL =
             'https://script.google.com/macros/s/AKfycbyxEokVu35Wn_rel7Hh-qWFsY2Iq5pCSM6z4d7TrQP70b6sKopgk8fAwlPXSo9RQSED/exec';
 
-        const APP_VERSION = '14';
+        const APP_VERSION = '15';
         (function watchAppVersion() {
             // GitHub Pages serves this site as .../<repo>/ (index.html). Tolerate
             // every URL shape: no trailing slash, query strings, direct index.html link.
@@ -1723,8 +1727,8 @@
                 t1('TSA 25 Q154', `The following data show the scores of 10 basketball players in a competition.<br>9, 26, 14, 14, 27, 16, 22, 12, 26, 14<br>Find the median of the above data.`, '15', 'mean_median_mode', ['14', '16', '18']),
                 t1('TSA 21 Q155', `The table below shows the number of stamps obtained in a 'Food Treasure Scheme' by 50 students.<br><table class="stem-table"><tr><th>Number of stamps</th><th>0 – 9</th><th>10 – 19</th><th>20 – 29</th><th>30 – 39</th></tr><tr><td>Number of students</td><td>29</td><td>11</td><td>7</td><td>3</td></tr></table><br>Find the modal class of the number of stamps obtained by the 50 students.`, '0-9', 'freq_table', ['10-19', '20-29', '30-39'], ['0-9', '0–9']),
                 t1('TSA 22 Q156', `The table below shows the distribution of the age of 150 members of a community centre.<br><table class="stem-table"><tr><th>Age (years old)</th><th>40 – 49</th><th>50 – 59</th><th>60 – 69</th><th>70 – 79</th><th>80 – 89</th></tr><tr><td>Number of members</td><td>2</td><td>13</td><td>59</td><td>61</td><td>15</td></tr></table><br>Find the modal class of the age of the 150 members.`, '70-79', 'freq_table', ['60-69', '80-89', '50-59'], ['70-79', '70–79']),
-                t1('TSA 23 Q157', `The table below shows the amount of 'Consumption Voucher' spent by 36 people within the first week.<br><table class="stem-table"><tr><th>Amount spent ($)</th><th>1 – 1000</th><th>1001 – 2000</th><th>2001 – 3000</th><th>3001 – 4000</th><th>4001 – 5000</th></tr><tr><td>Number of people</td><td>2</td><td>6</td><td>11</td><td>2</td><td>15</td></tr></table><br>Find the modal class of the amount of 'Consumption Voucher' spent by the 36 people.`, '4001-5000', 'freq_table', ['2001-3000', '3001-4000', '1-1000'], ['4001-5000', '4001–5000']),
-                t1('TSA 24 Q158', `The table below shows the distribution of the prices of 30 tablet computers.<br><table class="stem-table"><tr><th>Price ($)</th><th>2000 – 3999</th><th>4000 – 5999</th><th>6000 – 7999</th><th>8000 – 9999</th><th>10000 – 11999</th></tr><tr><td>Frequency</td><td>11</td><td>8</td><td>5</td><td>4</td><td>2</td></tr></table><br>Find the modal class of the prices of these 30 tablet computers.`, '2000-3999', 'freq_table', ['4000-5999', '6000-7999', '8000-9999'], ['2000-3999', '2000–3999']),
+                t1('TSA 23 Q157', `The table below shows the amount of 'Consumption Voucher' spent by 36 people within the first week.<br><table class="stem-table"><tr><th>Amount spent (\\$)</th><th>1 – 1000</th><th>1001 – 2000</th><th>2001 – 3000</th><th>3001 – 4000</th><th>4001 – 5000</th></tr><tr><td>Number of people</td><td>2</td><td>6</td><td>11</td><td>2</td><td>15</td></tr></table><br>Find the modal class of the amount of 'Consumption Voucher' spent by the 36 people.`, '4001-5000', 'freq_table', ['2001-3000', '3001-4000', '1-1000'], ['4001-5000', '4001–5000']),
+                t1('TSA 24 Q158', `The table below shows the distribution of the prices of 30 tablet computers.<br><table class="stem-table"><tr><th>Price (\\$)</th><th>2000 – 3999</th><th>4000 – 5999</th><th>6000 – 7999</th><th>8000 – 9999</th><th>10000 – 11999</th></tr><tr><td>Frequency</td><td>11</td><td>8</td><td>5</td><td>4</td><td>2</td></tr></table><br>Find the modal class of the prices of these 30 tablet computers.`, '2000-3999', 'freq_table', ['4000-5999', '6000-7999', '8000-9999'], ['2000-3999', '2000–3999']),
                 t1('TSA 25 Q159', `The table below shows the travelling time of Class 3A students from home to school.<br><table class="stem-table"><tr><th>Time (minutes)</th><th>10 – 19</th><th>20 – 29</th><th>30 – 39</th><th>40 – 49</th><th>50 – 59</th></tr><tr><td>Frequency</td><td>6</td><td>11</td><td>2</td><td>5</td><td>4</td></tr></table><br>Find the modal class of the travelling time of Class 3A students from home to school.`, '20-29', 'freq_table', ['10-19', '30-39', '40-49'], ['20-29', '20–29']),
                 t1('TSA 21 Q160', `The table below shows the take-away waiting time (minute) of 40 customers in a restaurant.<br><table class="stem-table"><tr><th>Time (minute)</th><th>0 – 4</th><th>5 – 9</th><th>10 – 14</th><th>15 – 19</th></tr><tr><td>Frequency</td><td>5</td><td>16</td><td>13</td><td>6</td></tr></table><br>Find the mean take-away waiting time of the 40 customers.`, '9.5', 'mean_median_mode', ['9', '10', '8.5']),
                 t1('TSA 22 Q161', `The table below shows the results of 30 students in a Mathematics test.<br><table class="stem-table"><tr><th>Result (mark)</th><th>1 – 25</th><th>26 – 50</th><th>51 – 75</th><th>76 – 100</th></tr><tr><td>Frequency</td><td>3</td><td>9</td><td>12</td><td>6</td></tr></table><br>Find the mean of the Mathematics test result of the 30 students.`, '55.5', 'mean_median_mode', ['55', '56', '54.5']),
@@ -1740,10 +1744,10 @@
                 t0('TSA 24 Q170', `A university conducted a test for dehumidifiers. The table below shows the score and the weight of each testing criterion for a model of dehumidifier.<br><table class="stem-table"><tr><th>Testing criterion</th><th>Daily dehumidification capacity</th><th>Energy efficiency</th><th>Sound level</th><th>Air purification performance</th></tr><tr><td>Score</td><td>87</td><td>94</td><td>69</td><td>50</td></tr><tr><td>Weight</td><td>40</td><td>40</td><td>10</td><td>10</td></tr></table><br>Find the weighted mean score of the model of dehumidifier.`, '84.3', ['25', '28.1', '75'], 'mean_median_mode'),
                 t0('TSA 25 Q172', `David applied for a scholarship. The table below shows the weight and his score of each judging criterion. The full marks of all criteria are equal.<br><table class="stem-table"><tr><th>Judging criterion</th><th>Interview Performance</th><th>School Results</th><th>Extra-curricular Activities</th><th>Awards</th></tr><tr><td>Score</td><td>25</td><td>30</td><td>15</td><td>10</td></tr><tr><td>Weight</td><td>5</td><td>3</td><td>1</td><td>1</td></tr></table><br>Find the weighted mean score of David.`, '24', ['2.5', '20', '60'], 'mean_median_mode'),
                 t1('TSA 21 Q173', `The following shows the check-in duration (minute) of 10 passengers of an airline.<br>3, 5, 6, 7, 16, 16, 19, 24, 26, 28<br>It is given that the mean check-in duration of the 10 passengers is 15 minutes. How many of the 10 passengers can finish their check-in in 15 minutes or less?`, '4', 'mean_median_mode', ['5', '6', '15']),
-                t1('TSA 22 Q174', `The following shows the monthly stationery expenditure ($) of Happy Company last year.<br>410, 500, 550, 600, 630, 700, 710, 720, 890, 940, 1260, 1450<br>It is given that the mean monthly stationery expenditure was $780 last year. How many months had stationery expenditure over $780 last year?`, '4', 'mean_median_mode', ['6', '5', '8']),
-                t1('TSA 23 Q175', `The prices of drinks at a restaurant are shown as follows.<br><table class="stem-table"><tr><th>Drink</th><th>Green Tea</th><th>Red Tea</th><th>Lemon Water</th><th>Lemon Tea</th><th>Coffee</th><th>Milk Tea</th><th>Chocolate Milk</th><th>Fresh Milk</th></tr><tr><td>Price</td><td>$14</td><td>$14</td><td>$16</td><td>$16</td><td>$17</td><td>$17</td><td>$24</td><td>$26</td></tr></table><br>It is given that the mean price of all types of drinks is $18. How many types of drinks are priced $18 or more?`, '2', 'mean_median_mode', ['4', '6', '3']),
+                t1('TSA 22 Q174', `The following shows the monthly stationery expenditure (\\$) of Happy Company last year.<br>410, 500, 550, 600, 630, 700, 710, 720, 890, 940, 1260, 1450<br>It is given that the mean monthly stationery expenditure was \\$780 last year. How many months had stationery expenditure over \\$780 last year?`, '4', 'mean_median_mode', ['6', '5', '8']),
+                t1('TSA 23 Q175', `The prices of drinks at a restaurant are shown as follows.<br><table class="stem-table"><tr><th>Drink</th><th>Green Tea</th><th>Red Tea</th><th>Lemon Water</th><th>Lemon Tea</th><th>Coffee</th><th>Milk Tea</th><th>Chocolate Milk</th><th>Fresh Milk</th></tr><tr><td>Price</td><td>\\$14</td><td>\\$14</td><td>\\$16</td><td>\\$16</td><td>\\$17</td><td>\\$17</td><td>\\$24</td><td>\\$26</td></tr></table><br>It is given that the mean price of all types of drinks is \\$18. How many types of drinks are priced \\$18 or more?`, '2', 'mean_median_mode', ['4', '6', '3']),
                 t1('TSA 24 Q176', `The following shows the monthly electricity consumption (kWh) of a company last year.<br>4300, 5300, 5800, 6300, 6600, 7200, 7300, 8100, 9100, 11600, 11700, 12700<br>It is given that the mean of the monthly electricity consumption of the company last year was 8000 kWh. How many of the monthly electricity consumptions were more than 8000 kWh?`, '5', 'mean_median_mode', ['6', '7', '8']),
-                t1('TSA 25 Q177', `The following shows the prices of the 8 gifts in a class lucky draw event.<br>$5, $9, $12, $20, $40, $100, $100, $100<br>It is given that the mode of the prices of the gifts is $100. How many gifts cost $100?`, '3', 'mean_median_mode', ['4', '5', '8'])
+                t1('TSA 25 Q177', `The following shows the prices of the 8 gifts in a class lucky draw event.<br>\\$5, \\$9, \\$12, \\$20, \\$40, \\$100, \\$100, \\$100<br>It is given that the mode of the prices of the gifts is \\$100. How many gifts cost \\$100?`, '3', 'mean_median_mode', ['4', '5', '8'])
             ];
 
             // ══ Level 2 — measures of dispersion (P1 Ch 14.1-14.5) ══
@@ -2392,7 +2396,7 @@
                 <span class="text-sm font-bold text-emerald-400">Part ${part.partLabel}</span>
                 <span id="l3-status-${pi}" class="${part.done ? 'text-green-400' : 'text-slate-400'} text-sm font-semibold">${part.done ? '✓ Correct' : ''}</span>
             </div>`;
-            inner += `<div id="l3-q-${pi}" class="text-lg sm:text-xl text-white mb-3 text-left overflow-x-auto px-4 min-h-[40px] leading-relaxed qtext">${styleVars(part.qHtml || part.text || '')}</div>`;
+            inner += `<div id="l3-q-${pi}" class="text-lg sm:text-xl text-white mb-3 text-left px-4 min-h-[40px] leading-relaxed qtext">${styleVars(part.qHtml || part.text || '')}</div>`;
             if (part.done) {
                 inner += `<div class="text-center text-green-400 text-sm py-2 font-semibold">Answer: $ ${part.mcAnswerStr} $</div>`;
             } else if (part.mode === 'mc') {
