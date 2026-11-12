@@ -385,8 +385,8 @@
                     ⭐ <span id="live-score">0</span>
                 </div>
             </div>
-            <button onclick="skipQuestion()" class="text-slate-500 hover:text-amber-400 transition text-xs font-bold uppercase tracking-wider mr-3">
-                Skip
+            <button id="skip-btn" onclick="skipQuestion()" aria-disabled="true" title="Answer wrongly first to unlock Skip" class="text-slate-500 transition text-xs font-bold uppercase tracking-wider mr-3 opacity-50 cursor-not-allowed">
+                Skip 🔒
             </button>
             <button onclick="quitGame()" class="text-slate-500 hover:text-red-400 transition text-xs font-bold uppercase tracking-wider">
                 Abort
@@ -560,7 +560,7 @@
         const GOOGLE_SCRIPT_URL =
             'https://script.google.com/macros/s/AKfycbybFSAODKwifwclDTUhaKiPjC20eIaUGdiBBttHXaieZP_ydlQBQxvLMjTl9PSjums/exec';
 
-        const APP_VERSION = '16';
+        const APP_VERSION = '17';
         (function watchAppVersion() {
             // GitHub Pages serves this site as .../<repo>/ (index.html). Tolerate
             // every URL shape: no trailing slash, query strings, direct index.html link.
@@ -2139,6 +2139,7 @@
             currentSetIndex = 0;
             activePart = null;
             updateLiveScore();
+            lockSkip();
             
             if (level === 3) {
                 // Level 3: LEVEL3_SETS multi-part question sets; each set shown as (a)(b)(c) blocks on one page
@@ -2442,6 +2443,7 @@
                 if (set.every(p => p.done)) {
                     setTimeout(() => {
                         currentSetIndex++;
+                        lockSkip();
                         if (currentSetIndex >= currentSets.length) {
                             winGame();
                         } else {
@@ -2451,6 +2453,7 @@
                 }
             } else {
                                 animateWrong();
+                                unlockSkip();
                                 showWrongReflectionModal();
             }
         }
@@ -2513,6 +2516,7 @@
                                 animateCorrect();
                                 showToast("Correct! Awesome job.", "success");
                 currentQuestionIndex++;
+                lockSkip();
                 
                 if (currentQuestionIndex >= currentQuestions.length) {
                     winGame();
@@ -2522,6 +2526,7 @@
             } else {
                 // Instantly pop up the wrong reflection modal before deducting life
                                 animateWrong();
+                                unlockSkip();
                                 showWrongReflectionModal();
             }
         }
@@ -2589,11 +2594,34 @@
             updatePassportUI();
         }
 
+        // --- SKIP GATE: Skip unlocks only after a wrong attempt on this question/set ---
+        let skipUnlocked = false;
+
+        function refreshSkipBtn() {
+            const btn = document.getElementById('skip-btn');
+            if (!btn) return;
+            btn.textContent = skipUnlocked ? 'Skip' : 'Skip 🔒';
+            btn.setAttribute('aria-disabled', skipUnlocked ? 'false' : 'true');
+            btn.title = skipUnlocked ? 'Skip this question (no mark or life lost)' : 'Answer wrongly first to unlock Skip';
+            btn.classList.toggle('opacity-50', !skipUnlocked);
+            btn.classList.toggle('cursor-not-allowed', !skipUnlocked);
+            btn.classList.toggle('hover:text-amber-400', skipUnlocked);
+        }
+
+        function unlockSkip() { skipUnlocked = true; refreshSkipBtn(); }
+
+        function lockSkip() { skipUnlocked = false; refreshSkipBtn(); }
+
         // Skip the current question/set without scoring (no mark, no life loss).
         // Picks an unused question/set of the same level (direct bank first, then
         // generated) and never advances the progress counter — a level is only
         // completed by answering all questions correctly.
         function skipQuestion() {
+            if (!skipUnlocked) {
+                showToast("Skip unlocks after you answer this question wrongly.", "info");
+                return;
+            }
+            lockSkip();
             if (currentLevel === 3) {
                 const usedTexts = new Set(currentSets.map(s => s.map(p => p.qHtml).join('|')));
                 const usedOpts = new Set(currentSets.map(s => s.map(p => [...p.options].sort().join('~')).join('|')));
